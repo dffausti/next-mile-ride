@@ -371,7 +371,7 @@ const buttonRow: React.CSSProperties = {
             Distance auto-calculates after pickup + destination. Upload Picture ID and Selfie for verification.
           </p>
 
-          <div style={grid}>
+          <div className="nm-grid" style={grid}>
             <div>
               <label style={labelStyle}>Full Name</label>
               <input value={fullName} onChange={(e) => setFullName(e.target.value)} style={inputStyle} />
@@ -387,7 +387,7 @@ const buttonRow: React.CSSProperties = {
               )}
             </div>
 
-            <div style={buttonRow}>
+            <div className="nm-buttonRow" style={buttonRow}>
               <label style={labelStyle}>Trip Type</label>
               <select value={tripType} onChange={(e) => setTripType(e.target.value as TripType)} style={inputStyle}>
                 <option>Work/Job</option>
@@ -396,7 +396,7 @@ const buttonRow: React.CSSProperties = {
               <div style={mutedSmall}>Work/Job can be short distance. Tourism/Tour must be 25+ miles.</div>
             </div>
 
-            <div style={buttonRow}>
+<div className="nm-buttonRow" style={buttonRow}>
               <label style={labelStyle}>Picture ID</label>
               <input
                 type="file"
@@ -406,7 +406,7 @@ const buttonRow: React.CSSProperties = {
               />
             </div>
 
-            <div style={buttonRow}>
+<div className="nm-buttonRow" style={buttonRow}>
               <label style={labelStyle}>Selfie</label>
               <input
                 type="file"
@@ -416,7 +416,7 @@ const buttonRow: React.CSSProperties = {
               />
             </div>
 
-            <div style={buttonRow}>
+<div className="nm-buttonRow" style={buttonRow}>
               <label style={labelStyle}>Pickup Address (Point A)</label>
               <input
                 value={pickupAddress}
@@ -429,7 +429,7 @@ const buttonRow: React.CSSProperties = {
               />
             </div>
 
-            <div style={buttonRow}>
+<div className="nm-buttonRow" style={buttonRow}>
               <label style={labelStyle}>Destination Address (Point B)</label>
               <input
                 value={destinationAddress}
@@ -442,7 +442,7 @@ const buttonRow: React.CSSProperties = {
               />
             </div>
 
-            <div style={buttonRow}>
+<div className="nm-buttonRow" style={buttonRow}>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <div style={{ ...card, flex: 1, minWidth: 240 }}>
                   <div style={{ fontWeight: 900, color: "#111827" }}>Distance</div>
@@ -504,7 +504,7 @@ const buttonRow: React.CSSProperties = {
               />
             </div>
 
-            <div style={buttonRow}>
+<div className="nm-buttonRow" style={buttonRow}>            
               <label style={labelStyle}>Party Size</label>
               <input
                 type="number"
@@ -515,7 +515,7 @@ const buttonRow: React.CSSProperties = {
               />
             </div>
 
-            <div style={buttonRow}>
+<div className="nm-buttonRow" style={buttonRow}>
               <label style={labelStyle}>Payment Method</label>
               <select
                 value={paymentMethod}
@@ -647,7 +647,32 @@ const buttonRow: React.CSSProperties = {
           © {new Date().getFullYear()} Next Mile Ride
         </footer>
       </div>
-    </main>
+<style jsx global>{`
+  /* Prevent accidental horizontal scrolling */
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Portrait / small screens */
+  @media (max-width: 520px) {
+    .nm-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .nm-buttonRow {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+
+    .nm-buttonRow > button {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+  }
+`}</style>
+    
+</main>
   );
 }
 
