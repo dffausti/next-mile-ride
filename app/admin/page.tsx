@@ -65,11 +65,12 @@ export default function AdminPage() {
     alert("Admin key cleared.");
   }
 
-  function authHeaders() {
-    const k = adminKey.trim();
-    // If key is present, attach it. If not, send nothing (local-only mode will still work).
-    return k ? { "x-admin-key": k } : {};
-  }
+function authHeaders(): HeadersInit {
+  const k = adminKey.trim();
+  const headers: Record<string, string> = {};
+  if (k) headers["x-admin-key"] = k;
+  return headers;
+}
 
   async function load() {
     setLoading(true);
