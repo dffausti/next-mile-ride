@@ -250,15 +250,29 @@ ${colors.bg}`,
     boxShadow: "0 18px 55px rgba(0,0,0,0.25)",
   };
 
-  const grid: React.CSSProperties = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 };
-  const fullRow: React.CSSProperties = { gridColumn: "1 / -1" };
+const grid: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+  gap: 14,
+  width: "100%",
+};
 
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    fontSize: 13,
-    fontWeight: 800,
-    color: "#1f2937",
-  };
+const fullRow: React.CSSProperties = { gridColumn: "1 / -1" };
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  fontSize: 13,
+  fontWeight: 800,
+  color: "#1f2937",
+};
+const buttonRow: React.CSSProperties = {
+  gridColumn: "1 / -1",
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 12,
+  alignItems: "center",
+  justifyContent: "stretch",
+};
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
@@ -373,7 +387,7 @@ ${colors.bg}`,
               )}
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <label style={labelStyle}>Trip Type</label>
               <select value={tripType} onChange={(e) => setTripType(e.target.value as TripType)} style={inputStyle}>
                 <option>Work/Job</option>
@@ -382,7 +396,7 @@ ${colors.bg}`,
               <div style={mutedSmall}>Work/Job can be short distance. Tourism/Tour must be 25+ miles.</div>
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <label style={labelStyle}>Picture ID</label>
               <input
                 type="file"
@@ -392,7 +406,7 @@ ${colors.bg}`,
               />
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <label style={labelStyle}>Selfie</label>
               <input
                 type="file"
@@ -402,7 +416,7 @@ ${colors.bg}`,
               />
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <label style={labelStyle}>Pickup Address (Point A)</label>
               <input
                 value={pickupAddress}
@@ -415,7 +429,7 @@ ${colors.bg}`,
               />
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <label style={labelStyle}>Destination Address (Point B)</label>
               <input
                 value={destinationAddress}
@@ -428,7 +442,7 @@ ${colors.bg}`,
               />
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 <div style={{ ...card, flex: 1, minWidth: 240 }}>
                   <div style={{ fontWeight: 900, color: "#111827" }}>Distance</div>
@@ -490,7 +504,7 @@ ${colors.bg}`,
               />
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <label style={labelStyle}>Party Size</label>
               <input
                 type="number"
@@ -501,7 +515,7 @@ ${colors.bg}`,
               />
             </div>
 
-            <div style={fullRow}>
+            <div style={buttonRow}>
               <label style={labelStyle}>Payment Method</label>
               <select
                 value={paymentMethod}
@@ -517,7 +531,7 @@ ${colors.bg}`,
               </div>
             </div>
 
-            <div style={{ ...fullRow, display: "grid", gap: 10 }}>
+            <div style={{ ...buttonRow, display: "grid", gap: 10 }}>
               <div style={checkboxRow}>
                 <input
                   type="checkbox"
@@ -575,11 +589,29 @@ ${colors.bg}`,
               </div>
             )}
 
-            <div style={fullRow}>
-              <button onClick={submit} disabled={errors.length > 0} style={primaryButton(errors.length > 0)}>
-                Submit Ride Request
-              </button>
-            </div>
+<div
+  style={{
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    marginTop: 16,
+  }}
+>
+  <button
+    onClick={submit}
+    disabled={errors.length > 0}
+    style={{
+      ...primaryButton(errors.length > 0),
+      width: "100%",
+      maxWidth: 360,
+      padding: "14px 16px",
+      whiteSpace: "normal",
+      textAlign: "center",
+    }}
+  >
+    Submit Ride Request
+  </button>
+</div>
 
             {savedRequestId && (
               <div style={{ ...card, ...fullRow }}>
