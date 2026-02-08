@@ -1,0 +1,202 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+type TripType = "Work/Job" | "Tourism/Tour";
+
+function yearsBetween(dobISO: string) {
+  const dob = new Date(dobISO);
+  const now = new Date();
+  let years = now.getFullYear() - dob.getFullYear();
+  const m = now.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) years--;
+  return years;
+}
+
+export default function RequestPage() {
+  // ===== FORM STATE =====
+  const [fullName, setFullName] = useState("");
+  const [dob, setDob] = useState("");
+  const [tripType, setTripType] = useState<TripType>("Work/Job");
+  const [pickupAddress, setPickupAddress] = useState("");
+  const [destinationAddress, setDestinationAddress] = useState("");
+  const [pickupDateTime, setPickupDateTime] = useState("");
+  const [partySize, setPartySize] = useState(1);
+  const [distanceMiles, setDistanceMiles] = useState<number>(25);
+
+  // ===== PAYMENT STATE =====
+  const [savedRequestId, setSavedRequestId] = useState<string | null>(null);
+  const [paymentSubmitted, setPaymentSubmitted] = useState(false);
+
+  const age = useMemo(() => (dob ? yearsBetween(dob) : null), [dob]);
+
+  const errors = useMemo(() => {
+    const e: string[] = [];
+    if (!fullName.trim()) e.push("Full name required");
+    if (!dob) e.push("DOB required");
+    if (age !== null && age < 21) e.push("Must be at least 21");
+    if (!pickupAddress.trim()) e.push("Pickup address required");
+    if (!destinationAddress.trim()) e.push("Destination required");
+    if (!pickupDateTime) e.push("Pickup date/time required");
+    if (partySize < 1) e.push("Party size must be at least 1");
+    if (tripType === "Tourism/Tour" && distanceMiles < 25)
+      e.push("Tourism trips must be 25+ miles");
+    return e;
+  }, [fullName, dob, age, pickupAddress, destinationAddress, pickupDateTime, partySize, tripType, distanceMiles]);
+
+  // ===== SUBMIT REQUEST =====
+  async function submit() {
+    if (errors.length) return;
+
+    const payload = {
+      fullName,
+      dob,
+      tripType,
+      pickupAddress,
+      destinationAddress,
+      pickupDateTime,
+      partySize,
+      distanceMiles,
+      paymentMethod: "Zelle",
+      ackOnTime: true,
+      ackPayment24h: true,
+      ackCancelFee: true,
+    };
+
+    const res = await fetch("/api/requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(data?.error || "Submit failed");
+      return;
+    }
+
+    setSavedRequestId(data.id);
+    setPaymentSubmitted(false);
+    alert(`Request saved! ID: ${data.id}`);
+  }
+
+  // ===== MARK PAYMENT SUBMITTED =====
+  async function markPaymentSubmitted() {
+    if (!savedRequestId) return;
+
+    const res = await fetch(
+      `/api/requests/${savedRequestId}/payment-submitted`,
+      { method: "POST" }
+    );
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(data?.error || "Failed to mark payment submitted");
+      return;
+    }
+
+    setPaymentSubmitted(true);
+    alert("Payment marked as SUBMITTED. Admin will confirm.");
+  }
+
+  return (
+    <main style={{ maxWidth: 900, margin: "40px auto", padding: 20, fontFamily: "system-ui" }}>
+      {/* APP HEADER */}
+      <div
+        style={{
+          background: "#1e40af",
+          color: "white",
+          padding: 20,
+          borderRadius: 16,
+          marginBottom: 24,
+        }}
+      >
+        <h1 style={{ margin: 0, fontSize: 32 }}>Next Mile Ride</h1>
+        <p style={{ marginTop: 6 }}>
+          Long-distance & commute ride requests
+        </p>
+      </div>
+
+      {/* FORM */}
+      <div
+        style={{
+          background: "white",
+          padding: 24,
+          borderRadius: 16,
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+        }}
+      >
+        <h2 style={{ marginBottom: 16 }}>Request a Ride</h2>
+
+        <input placeholder="Full Name" value={fullName} onChange={e => setFullName(e.target.value)} style={input} />
+        <input type="date" value={dob} onChange={e => setDob(e.target.value)} style={input} />
+        <select value={tripType} onChange={e => setTripType(e.target.value as TripType)} style={input}>
+          <option>Work/Job</option>
+          <option>Tourism/Tour</option>
+        </select>
+        <input placeholder="Pickup Address" value={pickupAddress} onChange={e => setPickupAddress(e.target.value)} style={input} />
+        <input placeholder="Destination Address" value={destinationAddress} onChange={e => setDestinationAddress(e.target.value)} style={input} />
+        <input type="datetime-local" value={pickupDateTime} onChange={e => setPickupDateTime(e.target.value)} style={input} />
+        <input type="number" min={1} value={partySize} onChange={e => setPartySize(Number(e.target.value))} style={input} />
+
+        <div style={{ marginTop: 10 }}>Distance: <b>{distanceMiles} miles</b></div>
+
+        {errors.length > 0 && (
+          <ul style={{ color: "crimson", marginTop: 10 }}>
+            {errors.map(e => <li key={e}>{e}</li>)}
+          </ul>
+        )}
+
+        <button onClick={submit} disabled={errors.length > 0} style={primaryBtn}>
+          Submit Ride Request
+        </button>
+
+        {/* PAYMENT STATUS */}
+        {savedRequestId && (
+          <div
+            style={{
+              marginTop: 20,
+              padding: 16,
+              borderRadius: 16,
+              background: "#f3f6ff",
+              border: "1px solid #c7d2fe",
+            }}
+          >
+            <h3>Payment Status</h3>
+            <div>Request ID: <b>{savedRequestId}</b></div>
+            <div>Status: <b>{paymentSubmitted ? "SUBMITTED" : "NOT SUBMITTED"}</b></div>
+
+            <button
+              onClick={markPaymentSubmitted}
+              disabled={paymentSubmitted}
+              style={{ ...primaryBtn, marginTop: 10 }}
+            >
+              Mark Payment Submitted
+            </button>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
+
+const input: React.CSSProperties = {
+  width: "100%",
+  padding: 12,
+  marginBottom: 10,
+  borderRadius: 10,
+  border: "1px solid #ccc",
+};
+
+const primaryBtn: React.CSSProperties = {
+  marginTop: 16,
+  padding: 14,
+  width: "100%",
+  borderRadius: 12,
+  background: "#1e40af",
+  color: "white",
+  border: "none",
+  fontWeight: 800,
+  cursor: "pointer",
+};
+

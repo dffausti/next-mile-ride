@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model RideRequest {
+  id                 String   @id @default(cuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Requester info
+  fullName           String
+  dob                DateTime
+
+  // Trip info
+  tripType           String
+  pickupAddress      String
+  destinationAddress String
+  pickupDateTime     DateTime
+  returnDateTime     DateTime?
+  partySize          Int
+  distanceMiles      Float?
+
+  // Verification uploads (filenames for now)
+  photoIdFileName    String?
+  selfieFileName     String?
+
+  // Payment
+  paymentMethod      String
+  paymentSubmitted   Boolean  @default(false)
+  paymentSubmittedAt DateTime?
+
+  // Acknowledgements
+  ackOnTime          Boolean
+  ackPayment24h      Boolean
+  ackCancelFee       Boolean
+}
+

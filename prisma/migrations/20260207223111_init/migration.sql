@@ -1,0 +1,25 @@
+-- CreateTable
+CREATE TABLE "RideRequest" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    "fullName" TEXT NOT NULL,
+    "dob" DATETIME NOT NULL,
+    "tripType" TEXT NOT NULL,
+    "pickupAddress" TEXT NOT NULL,
+    "destinationAddress" TEXT NOT NULL,
+    "pickupDateTime" DATETIME NOT NULL,
+    "returnDateTime" DATETIME,
+    "partySize" INTEGER NOT NULL,
+    "distanceMiles" REAL,
+    "photoIdFileName" TEXT,
+    "selfieFileName" TEXT,
+    "paymentMethod" TEXT NOT NULL,
+    "paymentStatus" TEXT NOT NULL DEFAULT 'NOT_PAID',
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "cancelledAt" DATETIME,
+    "cancellationFeeApplies" BOOLEAN NOT NULL DEFAULT false,
+    "ackOnTime" BOOLEAN NOT NULL DEFAULT false,
+    "ackPayment24h" BOOLEAN NOT NULL DEFAULT false,
+    "ackCancelFee" BOOLEAN NOT NULL DEFAULT false
+);
