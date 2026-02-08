@@ -33,6 +33,9 @@ model RideRequest {
   paymentSubmitted   Boolean  @default(false)
   paymentSubmittedAt DateTime?
 
+  paymentConfirmed   Boolean  @default(false)
+  paymentConfirmedAt DateTime?
+
   // Acknowledgements
   ackOnTime          Boolean
   ackPayment24h      Boolean
