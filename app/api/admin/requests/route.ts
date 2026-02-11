@@ -3,11 +3,20 @@ export const runtime = "nodejs";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { assertAdminAccess } from "@/lib/adminGuard";
+import { rateLimit } from "@/lib/rateLimit";
 
 export async function GET(req: NextRequest) {
   const access = assertAdminAccess(req);
   if (!access.ok) {
     return NextResponse.json({ error: access.error }, { status: access.status });
+  }
+
+  const rl = rateLimit(req, "admin:requests", 60, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many requests. Try again soon." },
+      { status: rl.status, headers: { "Retry-After": String(rl.retryAfterSec) } }
+    );
   }
 
   try {
